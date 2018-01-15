@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/plugins/ForestRoadDesigner" >
+        <file>icons/icon.png</file>
+        <file>icons/aboutIcon.png</file>
+        <file>icons/logoLaRioja.png</file>
+        <file>icons/PANOiFullHD.png</file>
+    </qresource>
+</RCC>
