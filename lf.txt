@@ -1,0 +1,7 @@
+Test file with LF line endings
+Test file with LF line endings
+
+
+
+
+
