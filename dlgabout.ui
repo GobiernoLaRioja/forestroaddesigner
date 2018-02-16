@@ -35,7 +35,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout">
               <property name="sizeConstraint">
-               <enum>QLayout::SetMaximumSize</enum>
+               <enum>QLayout::SetMinimumSize</enum>
               </property>
               <item>
                <widget class="QLabel" name="versionLabel">

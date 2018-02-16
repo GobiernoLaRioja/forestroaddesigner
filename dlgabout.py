@@ -4,21 +4,30 @@
  ForestRoadDesigner
                                  A QGIS plugin
  This plugin serve as support of foresters in the design of forest roads
-                             -------------------
-        begin                : 2017-02-08
-        copyright            : (C) 2017 by PANOimagen S.L.
-        email                : info@panoimagen.com
-        git sha              : $Format:%H$
+                     -------------------
+        begin          : 2017-02-08
+        git sha        : $Format:%H$
+        copyright      : (C) 2017 by PANOimagen S.L.
+        email          : info@panoimagen.com
+        repository     : https://github.com/GobiernoLaRioja/forestroaddesigner
  ***************************************************************************/
 
 /***************************************************************************
  *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
+ *   This program is free software: you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation, either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       * 
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/> *
  ***************************************************************************/
+
 This module manages the about information of the plugin
 """
 
@@ -45,29 +54,51 @@ class DlgAbout(QDialog, FormClass):
         QDialog.__init__(self, parent)
         self.setupUi(self)
         
-        repository_info = (u'Code repository: PENDIENTE\nBug Tracker: PENDIENTE')
+        repo_url = (u'<address><b>https://github.com/GobiernoLaRioja/' +
+                    u'forestroaddesigner</address></b>')
+        tracker_url = (u'<address><b>https://github.com/GobiernoLaRioja/' +
+                       u'forestroaddesigner/issues</address></b><br>')
+        panoi_url = u'<address><b>www.panoimagen.com</address></b><br>'
         
-        contact_info = (u'Copyright: (C) 2017 by PANOimagen S.L.\nPANOimagen' +
-                        u' S.L. La Rioja (Spain)\nwww.panoimagen.com')
+        repository_info = (u'Code repository: {}<br>Bug Tracker: {}'.format(
+                repo_url, tracker_url))
         
+        contact_info = (u'<h3>Copyright (C) 2017  by PANOimagen S.L.</h3>' +
+                        u'PANOimagen S.L. La Rioja (Spain) -- {}'.format(
+                                panoi_url))
+
         plugin_description = (u'This plugin has been funded by the Dirección' +
-                              u' General de Medio Natural del Gobierno de La' +
-                              u' Rioja and developed by PANOimagen S.L.\n'+
-                              u'Forest Road Designer serve as support of'+
-                              u' foresters in the design of forest roads.\n' +
+                              u' General de Tecnologías de la Información' +
+                              u' y la Comunicación\ndel Gobierno de La Rioja'+
+                              u' and developed by PANOimagen S.L. at the' +
+                              u' request of the Dirección General\ndel' +
+                              u' Gobierno de La Rioja.\n\nForest Road' +
+                              u' Designer serves as support of foresters'+
+                              u' in the design of forest roads.\n' +
                               u'For more information, please, read metadata/' +
                               u'readme and/or contact the author.')
         
-        license_info = (u'This program is free software: you can' +
-                        u' redistribute it and/or modify it under the terms' +
-                        u' of the GNU General Public License\nas published' +
-                        u' by the Free Software Foundation, either version 3' +
-                        u' of the License, or (at your option) any later' +
-                        u' version.')
+        license_info = (u'<h3>License:' +
+                        u'</h3>This program is free software' +
+                        u' you can redistribute it and/or modify it under' +
+                        u' the terms of the GNU General<br>Public License as' +
+                        u' published by the Free Software Foundation, either' +
+                        u' version 3 of the License, or (at your<br>option)' +
+                        u' any later version.<br><br>This program is' +
+                        u' distributed in the hope that it will be useful,' +
+                        u' but WITHOUT ANY WARRANTY; without even<br>the' +
+                        u' implied warranty of MERCHANTABILITY or FITNESS' +
+                        u' FOR A PARTICULAR PURPOSE.  See the GNU General' +
+                        u'<br>Public License for more details.<br><br>' +
+                        u'You should have received a copy of the GNU' +
+                        u' General Public License along with this program.' +
+                        u' If not, see:<br><address><b>https://www.gnu.org/' +
+                        u'licenses/</address></b>.')
         
         self.codeRepoLabel.setText(repository_info)
         self.contactLabel.setText(contact_info)
         self.descriptionLabel.setText(plugin_description)
         self.licenseLabel.setText(license_info)
-        self.versionLabel.setText(u'Forest Road Designer version {}'.format(
-                version.VERSION))
+        self.versionLabel.setText(u'<h2>Forest Road Designer<\h2>' +
+                                  u' Version {}'.format(
+                                          version.VERSION))

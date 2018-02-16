@@ -28,56 +28,41 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/> *
  ***************************************************************************/
 """
+from __future__ import unicode_literals
 
-from qgis.core import QgsMessageLog
+import unittest
+import numpy as np
 
-class QgsLogging(object):
-    DEBUG = -1
-    INFO = QgsMessageLog.INFO
-    WARNING = QgsMessageLog.WARNING
-    CRITICAL = QgsMessageLog.CRITICAL
-    NONE = 100
-    
-    def __init__(self, tag):
-        self._tag = tag
-        self._level = QgsMessageLog.INFO
+import viewers
+
+class ViewersTestCase(unittest.TestCase):
+    def test_remove_undef_values_malformed(self):
+        """Test the remove undef values works fine with malformed dtm.
         
-        self.debug = lambda msg: self._message(msg, self.DEBUG)
-        self.info = lambda msg: self._message(msg, self.INFO)
-        self.warning = lambda msg: self._message(msg, self.WARNING)
-        self.critical = lambda msg: self._message(msg, self.CRITICAL)
-        self.error = lambda msg: self._message(msg, self.CRITICAL)
+        Check that if no defined values exist, the function still works.
+        """
+        undefined_value = -9999
+        dtm_m = np.zeros([10,10]) + undefined_value
+        dtm_m2 = viewers.remove_undef(dtm_m, undefined_value)
+        self.assertEqual(dtm_m2[dtm_m2<=undefined_value].nbytes, 0)
+        np.testing.assert_allclose(dtm_m, np.zeros(dtm_m.shape))
     
-    def setLevel(self, level):
-        self._level = level
-        
-    def _message(self, message, level):
-        if level >= self._level:
-            QgsMessageLog.logMessage(message, self._tag, level)
+    def test_remove_undef_values(self):
+        """Test the remove undef values works fine with dtm with undefs."""
+        undefined_value = -9999
+        dtm_m = np.zeros([10,10]) + undefined_value
+        dtm_m[1,1] = 10
+        dtm_m2 = viewers.remove_undef(dtm_m, undefined_value)
+        self.assertEqual(dtm_m2[dtm_m2<=undefined_value].nbytes, 0)
+        np.testing.assert_allclose(dtm_m, np.ones(dtm_m.shape)*dtm_m[1,1])
 
-class defaultdictfromkey(dict):
-    def __init__(self, factory):
-        self.factory = factory
-    def __missing__(self, key):
-        self[key] = self.factory(key)
-        return self[key]
+    def test_remove_undef_values_no_undefs(self):
+        """Test the remove undef values works fine with dtm with undefs."""
+        undefined_value = -9999
+        dtm_m = np.ones([10,10])
+        dtm_m2 = viewers.remove_undef(dtm_m, undefined_value)
+        self.assertEqual(dtm_m2[dtm_m2<=undefined_value].nbytes, 0)
+        np.testing.assert_allclose(dtm_m, np.ones(dtm_m.shape))
 
-LOGGERS = defaultdictfromkey(QgsLogging)
-
-def getLogger(tag):
-    return LOGGERS[tag]
-
-
-ROOT = getLogger("root")
-
-def basicConfig(*args, **kwargs):
-    pass
-
-setLevel = lambda level: ROOT.setLevel(level)
-debug = lambda msg: ROOT.debug(msg)
-info = lambda msg: ROOT.info(msg)
-warning = lambda msg: ROOT.warning(msg)
-critical = lambda msg: ROOT.critical(msg)
-error = lambda msg: ROOT.critical(msg)
-
-    
+if __name__ == "__main__":
+    unittest.main()
