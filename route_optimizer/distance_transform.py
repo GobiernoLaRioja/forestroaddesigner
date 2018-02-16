@@ -1,7 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 """
 /***************************************************************************
- ForestRoadDesignerDockWidget
+ ForestRoadDesigner
                                  A QGIS plugin
  This plugin serve as support of foresters in the design of forest roads
                      -------------------
