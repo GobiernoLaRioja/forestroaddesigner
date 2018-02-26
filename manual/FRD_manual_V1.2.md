@@ -67,6 +67,7 @@ resoluciones superiores a la indicada podremos ver completamente la
 interfaz del plugin.
 
 ![Interfaz de usuario](./img/media/image5.png?raw=true "Interfaz de usuario")
+
 **Imagen 1.** Aspecto de la interfaz gráfica del complemento *Forest Road Designer*
 
 **Descripción de los objetos de la interfaz:**
@@ -219,10 +220,12 @@ e Imagen 3).
   Esta capa es necesario que esté almacenada en disco para que la
   función sea operativa.
 
-![Diseño sin áreas de exclusión](./img/media/image6.jpeg?raw=true "Diseño in áreas de exclusión") 
+![Diseño sin áreas de exclusión](./img/media/image6.jpeg?raw=true "Diseño sin áreas de exclusión") 
+
 **Imagen 2.** Trazado de vía sin incluir áreas de exclusión al trazado
 
 ![Trazado con áreas de exclusión](./img/media/image7.jpeg "Diseño con áreas de exclusión") 
+
 **Imagen 3.** Trazado de vía incluyendo áreas de exclusión. La aplicación traza la vía 
 evitando entrar en el área rallada verticalmente
 
@@ -299,6 +302,7 @@ terreno en metros/pixel.
     4) con un tamaño de vecindad *c = 2*.
 
 ![Esquema del tamaño de vecindad](./img/media/image8.png?raw=true "Esquema del tamaño de vecindad")
+
 **Imagen 4**. Esquema de la estructura de un ráster y del tamaño de vecindad 
 en la búsqueda de la ruta óptima. Vecindad (c) = 2
 
@@ -318,10 +322,12 @@ en la búsqueda de la ruta óptima. Vecindad (c) = 2
   pueden provocar también que no se encuentre una ruta óptima.
 
 ![Trazado con tamaño de vecindad bajo (c=3)](./img/media/image9.jpeg?raw=true "Trazado con tamaño de vecindad bajo (c=3)")
+
 **Imagen 5.** Trazado resultante con tamaño de vecindad 3. MDT de 10 metros. [70 x 70] metros de área de
 búsqueda
 
 ![Trazado con tamaño de vecindad alto (c=15)](./img/media/image10.jpeg "Trazado con tamaño de vecindad alto (c=15)")
+
 **Imagen 6.** Trazado resultante con tamaño de vecindad 15. MDT de 10 metros. [310 x 310] metros de área de
 búsqueda
 
@@ -367,6 +373,7 @@ distintos valores va a dar lugar a los resultados deseados.
     penalización se le va a asignar.
 
 ![Función parabólica empleada para las penalizaciones](./img/media/image11.png "Función parabólica empleada para las penalizaciones")
+
 **Imagen 7.** Función parabólica empleada para cuantificar la penalización en metros (x) en función del valor
 del parámetro a penalizar (y)
 
@@ -399,6 +406,7 @@ penalizaciones.
     técnicamente y de corta longitud (Imagen 8).
 
 ![Trazado sin penalización para el cambio de dirección](./img/media/image12.jpeg "Trazado sin penalización para el cambio de dirección")
+
 **Imagen 8.** Trazado resultante para un factor de penalización de cambio de dirección de 0 metros.
 
   Al aumentar la penalización, por ejemplo, a 40 metros por cambio de
@@ -406,6 +414,7 @@ penalizaciones.
   9) presenta un menor número de curvas y una longitud total menor.
 
 ![Trazado con penalización al cambio de dirección de 40 metros](./img/media/image13.jpeg "Trazado con penalización al cambio de dirección de 40 metros")
+
 **Imagen 9.** Trazado resultante para un
 factor de penalización de cambio de dirección de 40 metros.
 
@@ -446,8 +455,9 @@ para el cruce de arroyos y vaguadas.
 
 ![Trazado con penalización nula al cambio de rasante](./img/media/image14.jpeg "Trazado con penalización nula al cambio de rasante")
 ![Trazado con penalización al cambio de rasante](./img/media/image15.jpeg "Trazado con penalización al cambio de rasante")
-**Imagen 10.** Trazado con penalización de 0 metros al cambio de rasante (arriba) y con penalización al cambio de
-rasante (abajo)
+
+**Imagen 10.** Trazado con penalización de 0 metros al cambio de rasante (izda.) y con penalización al cambio de
+rasante (dcha.)
 
 - ***Tolerancia de la polilínea de resultado:***
 La aplicación, como ya se ha indicado anteriormente, genera una capa
@@ -489,6 +499,7 @@ indicar el trazado de la vía óptimo.
   la polilínea con simplificación (en tonos verdes).
 
 ![Simplificación de polilínea](./img/media/image17.png "Simplificación de polilínea")
+
 **Imagen 11.** Ejemplo de simplificación de la polilínea de resultado con el trazado de la vía, en verde polilínea
 simplificada, en azul polilínea sin simplificar
 
@@ -650,6 +661,7 @@ seis clases para pendientes positivas, seis clases para pendientes
 negativas y una clase para pendientes nulas o muy bajas (Imagen 12).
 
 ![Simbología por colores para el trazado de resultado](./img/media/image18.png "Simbología por colores para el trazado de resultado")
+
 **Imagen 12.** Ejemplo de la simbología del trazado diseñado por la herramienta Forest Road Designer en QGIS con sus
 respectivas clases de pendiente en porcentaje.
 
@@ -697,6 +709,7 @@ situaciones en las que aparezcan tramos en rojo, es decir que no
 cumplen con la pendiente admisible especificada para el trazado.
 
 ![Ejemplo de representación para un trazado incompleto](./img/media/image19.png "Ejemplo de representación para un trazado incompleto")
+
 **Imagen 13.** Caso para el cuál el optimizador no encuentra la ruta óptima. En blanco con borde negro la
 capa de entrada con los puntos de ruta, en verde-azul la ruta diseñada
 por la aplicación, en rojo tramo no procesado
