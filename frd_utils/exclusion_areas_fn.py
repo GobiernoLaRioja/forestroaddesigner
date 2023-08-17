@@ -1,41 +1,33 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- ForestRoadDesigner
+ ForestRoadDesignerDockWidget
                                  A QGIS plugin
  This plugin serve as support of foresters in the design of forest roads
-                     -------------------
-        begin          : 2017-02-08
-        git sha        : $Format:%H$
-        copyright      : (C) 2017 by PANOimagen S.L.
-        email          : info@panoimagen.com
-        repository     : https://github.com/GobiernoLaRioja/forestroaddesigner
+                             -------------------
+        begin                : 2017-02-08
+        git sha              : $Format:%H$
+        copyright            : (C) 2017 by PANOimagen S.L.
+        email                : info@panoimagen.com
  ***************************************************************************/
 
 /***************************************************************************
  *                                                                         *
- *   This program is free software: you can redistribute it and/or modify  *
+ *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation, either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   This program is distributed in the hope that it will be useful,       * 
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program.  If not, see <https://www.gnu.org/licenses/> *
  ***************************************************************************/
 
 This module creates a new raster with the exclusion areas using Gdal Rasterize 
 algorithm and returns the numpy array for this new raster.
 """
-from __future__ import unicode_literals
+
 from osgeo import gdal
 from osgeo import ogr
 from osgeo import gdalconst
-from qgis.core import QGis
+from qgis.core import QgsWkbTypes
 import tempfile
 import os
 
@@ -55,6 +47,7 @@ def create_exclusion_array(dtm_layer, exclusion_areas_layer,
         delete_output = True
     else:
         delete_output = False
+    
     
     target_ds = create_empty_raster_dataset(output_fn, dtm_layer)
     target_ds = rasterize_function(target_ds, exclusion_areas_layer)
@@ -88,9 +81,10 @@ def create_exclusion_raster(dtm_layer, exclusion_areas_layer,
 
 def create_empty_raster_dataset(output_fn, dtm_layer, NoDataValue=0):
     """Creates an empty geotiff with same size as dtm_layer.
+    
     Creates an empty geotiff on disk with same extent and resolution
     as the dtm_layer"""
-
+    # Get the extent and resolution of the input DTM:
     (x_min, pixel_width, _, y_min, _, pixel_height, x_res, 
             y_res) = get_DTM_info(dtm_layer)
     
@@ -107,7 +101,7 @@ def create_empty_raster_dataset(output_fn, dtm_layer, NoDataValue=0):
 def get_DTM_info(dtm_layer):
     """Function to extract the extent and resolution of a raster layer.
     """
-
+    # Get mask info: dtm_layer
     dtm_layer_data = gdal.Open(dtm_layer.source(), gdalconst.GA_ReadOnly)
     dtm_geotransform = dtm_layer_data.GetGeoTransform()
     x_min = dtm_geotransform[0]
@@ -122,10 +116,11 @@ def get_DTM_info(dtm_layer):
 
 def rasterize_function(target_ds, exclusion_areas_layer, data_value=1):
     """ Function to rasterize the exclusion_areas_layer vectorLayer.
+    
     The rasterized content is stored in band 1 of target_ds, which is the
     dataset of a raster layer.
     """ 
-
+    # Get exclusion_areas_layer info:
     mb_v = ogr.Open(exclusion_areas_layer.source())
     mb_l = mb_v.GetLayer()
     
@@ -146,6 +141,7 @@ def rasterize_function(target_ds, exclusion_areas_layer, data_value=1):
 
 def exclusion_areas_geoms(exclusion_areas_layer):
     """ Extracts the wkb geometry of each feature in exclusion_areas_layer.
+
     (These geometries are later used to check that waypoints given 
     by the user are outside the exclusion zones in optimizer_qgis.py)
     """
@@ -153,10 +149,14 @@ def exclusion_areas_geoms(exclusion_areas_layer):
     features = exclusion_areas_layer.dataProvider().getFeatures()
     for feat in features:
         geom = feat.geometry()
-        if geom.wkbType() == QGis.WKBPolygon:
-            exclusion_areas_wkb.append(geom.asWkb())
-        elif geom.wkbType() == QGis.WKBMultiPolygon:
-            raise NotImplementedError(
-            "Las capas de exclusión de tipo multipolígono " + 
-            "no están soportadas.")
+        if geom.isMultipart():
+            geom.convertToSingleType()
+            
+        exclusion_areas_wkb.append(geom.asWkb())
+        # if geom.wkbType() == QgsWkbTypes.Polygon:
+            # exclusion_areas_wkb.append(geom.asWkb())
+        # elif geom.wkbType() == QgsWkbTypes.MultiPolygon:
+            # raise NotImplementedError(
+            # "Las capas de exclusión de tipo multipolígono " + 
+            # "no están soportadas.")
     return exclusion_areas_wkb

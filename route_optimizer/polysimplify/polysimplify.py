@@ -1,33 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-/***************************************************************************
- ForestRoadDesigner
-                                 A QGIS plugin
- This plugin serve as support of foresters in the design of forest roads
-                     -------------------
-        begin          : 2017-02-08
-        git sha        : $Format:%H$
-        copyright      : (C) 2017 by PANOimagen S.L.
-        email          : info@panoimagen.com
-        repository     : https://github.com/GobiernoLaRioja/forestroaddesigner
- ***************************************************************************/
-
-/***************************************************************************
- *                                                                         *
- *   This program is free software: you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation, either version 3 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       * 
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program.  If not, see <https://www.gnu.org/licenses/> *
- ***************************************************************************/
-
+'''
 Visvalingam-Whyatt method of poly-line vertex reduction
 
 Visvalingam, M and Whyatt J D (1993)
@@ -61,7 +32,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ================================
-"""
+'''
 
 from numpy import array, argmin
 import numpy as np
@@ -109,7 +80,6 @@ def triangle_areas_from_array(arr):
 #the final value in thresholds is np.inf, which will never be
 # the min value.  So, I am safe in "deleting" an index by
 # just shifting the array over on top of it
-    
 def remove(s,i):
     '''
     Quick trick to remove an item from a numpy array without
@@ -126,7 +96,7 @@ class VWSimplifier(object):
         '''Initialize with points. takes some time to build 
         the thresholds but then all threshold filtering later 
         is ultra fast'''
-        self.pts = np.array(pts, dtype=np.float)
+        self.pts = np.array(pts, dtype=float)
         self.thresholds = self.build_thresholds()
         self.ordered_thresholds = sorted(self.thresholds,reverse=True)
 
@@ -139,7 +109,8 @@ class VWSimplifier(object):
         pts = self.pts
         nmax = len(pts)
         real_areas = triangle_areas_from_array(pts)
-        real_indices = range(nmax)
+        real_indices = list(range(nmax))
+
 
         #destructable copies 
         #ARG! areas=real_areas[:] doesn't make a copy!
@@ -251,6 +222,12 @@ class WKTSimplifier(VWSimplifier):
           else:
             self.pts_as_strs = self.pts.astype(str)
 
+
+      '''slow
+      def from_threshold(self,threshold,precision=None):
+          arr = np.array2string(self.pts[self.thresholds > threshold],precision=precision)
+          return arr.replace('[[ ','(').replace(']]',')').replace(']\n [ ',',')
+      '''
       def wkt_from_threshold(self,threshold, precision=None):
           if precision:
             self.set_precision(precision)
@@ -272,6 +249,8 @@ class WKTSimplifier(VWSimplifier):
           raise ValueError("Ratio must be 0<r<=1")
         else:
           return self.wkt_from_number(r*len(self.thresholds))
+
+
 
 try:
     from osgeo import gdal
@@ -308,7 +287,7 @@ else:
             name = geom.geom_name
             self.Geometry = lambda w: OGRGeometry(w,srs=geom.srs)
             self.pts = np.array(geom.tuple)
-          elif isinstance(geom, unicode) or isinstance(geom,str): 
+          elif isinstance(geom, str) or isinstance(geom,str): 
             #assume wkt
             #for WKT
             def str2tuple(q):
@@ -349,7 +328,7 @@ else:
           self.simplifiers = [WKTSimplifier(self.pts)]
 
       def line2wkt(self,pts):
-          return u'LINESTRING %s'%pts
+          return 'LINESTRING %s'%pts
 
       def linemask(self,threshold):
           get_pts = self.get_pts
@@ -367,7 +346,7 @@ else:
           self.simplifiers = result
 
       def poly2wkt(self,list_of_pts):
-          return u'POLYGON (%s)'%','.join(list_of_pts)
+          return 'POLYGON (%s)'%','.join(list_of_pts)
 
       def polymask(self,threshold):
           get_pts = self.get_pts
@@ -392,7 +371,7 @@ else:
           outerlist = []
           for list_of_pts in list_of_list_of_pts:
             outerlist.append('(%s)'%','.join(list_of_pts))
-          return u'MULTIPOLYGON (%s)'%','.join(outerlist)
+          return 'MULTIPOLYGON (%s)'%','.join(outerlist)
 
       def multimask(self,threshold):
           loflofsims = self.simplifiers
@@ -436,6 +415,7 @@ else:
             self.get_pts = lambda obj,t: obj.from_ratio(t)
           return self.maskfunc(r)
 
+
 def fancy_parametric(k):
     ''' good k's: .33,.5,.65,.7,1.3,1.4,1.9,3,4,5'''
     cos = np.cos
@@ -455,7 +435,7 @@ if __name__ == "__main__":
    simplifier = VWSimplifier(pts)
    pts = simplifier.from_number(1000)
    end = time()
-   print("{} vertices removed in {:02f} seconds".format(n-len(pts), end-start))
+   print(("{} vertices removed in {:02f} seconds".format(n-len(pts), end-start)))
    
    import matplotlib
    matplotlib.use('AGG')
@@ -463,3 +443,4 @@ if __name__ == "__main__":
    plot.plot(pts[:,0],pts[:,1],color='r')
    plot.savefig('visvalingam.png')
    print("saved visvalingam.png")
+   #plot.show()

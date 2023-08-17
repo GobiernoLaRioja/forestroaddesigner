@@ -19,6 +19,11 @@
   <property name="windowTitle">
    <string>Forest Road Designer About</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog {
+			background-color: rgb(200, 200, 200);
+}</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="1" column="1">
     <layout class="QGridLayout" name="gridLayout">
@@ -26,6 +31,9 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QGroupBox" name="groupBox">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="title">
           <string>FOREST ROAD DESIGNER PLUGIN</string>
          </property>
@@ -35,7 +43,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout">
               <property name="sizeConstraint">
-               <enum>QLayout::SetMinimumSize</enum>
+               <enum>QLayout::SetMaximumSize</enum>
               </property>
               <item>
                <widget class="QLabel" name="versionLabel">
@@ -88,7 +96,7 @@
                  <string/>
                 </property>
                 <property name="pixmap">
-                 <pixmap resource="resources.qrc">:/plugins/ForestRoadDesigner/icons/logoLaRioja.png</pixmap>
+                 <pixmap resource="resources.qrc">:/plugins/ForestRoadDesigner/icons/LaRioja_colorSINFONDO.png</pixmap>
                 </property>
                 <property name="scaledContents">
                  <bool>true</bool>
@@ -149,6 +157,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="resources.qrc"/>
  </resources>
  <connections/>
 </ui>

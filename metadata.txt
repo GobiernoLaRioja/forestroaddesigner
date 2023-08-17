@@ -8,16 +8,17 @@
 
 [general]
 name=Forest Road Designer
-qgisMinimumVersion=2.14
-description=This plugin serve as support of foresters in the design of forest roads
-version=1.1.18
-author=Dirección General de Tecnologías de la Información y la Comunicación - Gobierno de La Rioja (Spain)
-email=dgagendadigital@larioja.org
+# We use writeAsVectorFormatV2 (v3 for >= 3.20) which was included in 3.10.3
+qgisMinimumVersion=3.12
+description=This plugin serves as support of foresters in the design of forest roads
+version=3.00.91
+author=PANOimagen S.L.
+email=info@panoimagen.com
 
-about=This plugin serves as support of foresters in the design of forest roads. Taking as input a digital terrain model (raster dtm) and a starting polyline with the desired route to design (batch/automatic processing mode), or interactively through the addition of points by the user (interactive processing mode), the plugin generates another polyline that meets a series of design requirements established by the user (longitudinal slope among others). User also can define some areas to exclude of the forest road design, with a polygon layer. The user can also see the longitudinal profile of the designed road, for this it is recommended to use Profile tool plugin (https://plugins.qgis.org/plugins/profiletool/). The funcionality of the plugin is inspired in the ESRI Arcview Extension PEGGER (http://www.ruraltech.org/tools/pegger/). This plugin has been funded by the Dirección General de Tecnologías de la Información y la Comunicación del Gobierno de La Rioja and developed by PANOimagen S.L. at the request of the Dirección General de Medio Natural del Gobierno de La Rioja.
+about=This plugin serves as support of foresters in the design of forest roads. Taking as input a digital terrain model (raster dtm) and a starting polyline or Point layer (whose nodes/points indicates the starting point, end point and the waypoints of the road to be designed), another polyline is produced that meets a series of design requirements established by the user (longitudinal slope among others). This plugin allows user to generate a longitudinal terrain profile of the road designed. The funcionality of the plugin is inspired in the ESRI Arcview Extension PEGGER (http://www.ruraltech.org/tools/pegger/). This plugin has been funded by the Dirección General de Medio Natural del Gobierno de La Rioja and developed by PANOimagen S.L.
 
-tracker= https://github.com/GobiernoLaRioja/forestroaddesigner/issues
-repository= https://github.com/GobiernoLaRioja/forestroaddesigner
+tracker=Bug tracker
+repository=Repository
 # End of mandatory metadata
 
 # Recommended items:
@@ -26,14 +27,14 @@ repository= https://github.com/GobiernoLaRioja/forestroaddesigner
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=forest, road, designer, dtm
+tags=forest, road, design, dtm, profile
 
-homepage= https://github.com/GobiernoLaRioja/forestroaddesigner
+homepage=Home page
 category=Plugins
 icon=icon.png
 # experimental flag
-experimental=False
+experimental=True
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
-
+hasProcessingProvider=yes
