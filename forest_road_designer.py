@@ -4,40 +4,38 @@
  ForestRoadDesigner
                                  A QGIS plugin
  This plugin serve as support of foresters in the design of forest roads
-                     -------------------
-        begin          : 2017-02-08
-        git sha        : $Format:%H$
-        copyright      : (C) 2017 by PANOimagen S.L.
-        email          : info@panoimagen.com
-        repository     : https://github.com/GobiernoLaRioja/forestroaddesigner
+                              -------------------
+        begin                : 2017-02-08
+        git sha              : $Format:%H$
+        copyright            : (C) 2017 by PANOimagen S.L.
+        email                : info@panoimagen.com
  ***************************************************************************/
 
 /***************************************************************************
  *                                                                         *
- *   This program is free software: you can redistribute it and/or modify  *
+ *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation, either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   This program is distributed in the hope that it will be useful,       * 
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program.  If not, see <https://www.gnu.org/licenses/> *
  ***************************************************************************/
 """
-from __future__ import unicode_literals
+
 import os.path
 
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
-from PyQt4.QtGui import QAction, QIcon
+from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
+from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtGui import QIcon
 
-import resources   # NOQA
+from qgis.core import QgsApplication
+from .processing_provider.provider import Provider
 
-from forest_road_designer_dockwidget import ForestRoadDesignerDockWidget
-from dlgabout import DlgAbout
+# Initialize Qt resources from file resources.py
+from . import resources   # NOQA
+
+# Import the code for the DockWidget
+from .forest_road_designer_dockwidget import ForestRoadDesignerDockWidget
+from .dlgabout import DlgAbout
 
 class ForestRoadDesigner(object):
     """QGIS Plugin Implementation."""
@@ -70,15 +68,19 @@ class ForestRoadDesigner(object):
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
 
+        # processing provider
+        self.provider = None
+
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&Forest Road Designer')
+        self.menu = self.tr('&Forest Road Designer')
         # TODO: We are going to let the user set this up in a future iteration
-        self.toolbar = self.iface.addToolBar(u'ForestRoadDesigner')
-        self.toolbar.setObjectName(u'ForestRoadDesigner')
+        self.toolbar = self.iface.addToolBar('ForestRoadDesigner')
+        self.toolbar.setObjectName('ForestRoadDesigner')
 
         self.pluginIsActive = False
         self.dockwidget = None
+
 
     # noinspection PyMethodMayBeStatic
     @staticmethod
@@ -95,6 +97,7 @@ class ForestRoadDesigner(object):
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('ForestRoadDesigner', message)
+
 
     def add_action(
             self,
@@ -150,13 +153,13 @@ class ForestRoadDesigner(object):
         action = QAction(icon, text, parent)
         action.triggered.connect(callback)
         action.setEnabled(enabled_flag)
-        
+
         aboutIcon = QIcon(':/plugins/ForestRoadDesigner/icons/aboutIcon.png')
         self.actionAbout = QAction(
                 aboutIcon, 'Acerca de', self.iface.mainWindow())
         self.actionAbout.triggered.connect(self.about)
         self.actionAbout.setEnabled(enabled_flag)
-        
+
         if status_tip is not None:
             action.setStatusTip(status_tip)
 
@@ -175,15 +178,24 @@ class ForestRoadDesigner(object):
 
         return action
 
+
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_path = ':/plugins/ForestRoadDesigner/icons/icon.png'
         self.add_action(
             icon_path,
-            text=self.tr(u'Forest Road Designer'),
+            text=self.tr('Forest Road Designer'),
             callback=self.run,
             parent=self.iface.mainWindow())
+
+        self.initProcessing()
+
+    #--------------------------------------------------------------------------
+
+    def initProcessing(self):
+        self.provider = Provider()
+        QgsApplication.processingRegistry().addProvider(self.provider)
     #--------------------------------------------------------------------------
 
     def onClosePlugin(self):
@@ -192,18 +204,30 @@ class ForestRoadDesigner(object):
         # disconnects
         self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
 
+        # remove this statement if dockwidget is to remain
+        # for reuse if plugin is reopened
+        # Commented next statement since it causes QGIS crashe
+        # when closing the docked window:
+        # self.dockwidget = None
+
         self.pluginIsActive = False
+
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
 
+        #print "** UNLOAD ForestRoadDesigner"
+
         for action in self.actions:
             self.iface.removePluginMenu(
-                self.tr(u'&Forest Road Designer'),
+                self.tr('&Forest Road Designer'),
                 action)
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
         del self.toolbar
+
+        #remove processprovider
+        QgsApplication.processingRegistry().removeProvider(self.provider)
 
     #--------------------------------------------------------------------------
 
@@ -213,6 +237,11 @@ class ForestRoadDesigner(object):
         if not self.pluginIsActive:
             self.pluginIsActive = True
 
+            #print "** STARTING ForestRoadDesigner"
+
+            # dockwidget may not exist if:
+            #    first run of plugin
+            #    removed on close (see self.onClosePlugin method)
             if self.dockwidget is None:
                 # Create the dockwidget (after translation) and keep reference
                 self.dockwidget = ForestRoadDesignerDockWidget(self.iface)
@@ -220,8 +249,10 @@ class ForestRoadDesigner(object):
             # connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
 
+            # show the dockwidget
+            # TODO: fix to allow choice of dock location
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
-    
+
     def about(self):
         DlgAbout(self.iface.mainWindow()).exec_()
